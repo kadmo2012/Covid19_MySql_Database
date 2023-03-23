@@ -47,21 +47,22 @@ uploadfile="C:\\data\\us-states.csv"
 url = "https://raw.githubusercontent.com/nytimes/covid-19-data/master/us-states.csv"
 r = requests.get(url, allow_redirects=True)
 
-# downloadfile='C:\data\states_20220308.csv'
-#open('C:\data\states_20220309.csv', 'wb').write(r.content)
 open(downloadfile, 'wb').write(r.content)
 shutil.copyfile(downloadfile, uploadfile)
 
 
 This will download the NY Times covid-19 state data and save it to two files (one has a date included in the filename ).  
+
     /data/us-states.csv
     /data/us-states_yyyymmdd.csv
 
-Then run MySql from the system prompt:
-/programming/mysql --user=root --password=root
+Then run MySql CLI from the system prompt:
+
+/programming/ mysql --user=root --password=root
         
 
 From the MySql prompt run this script file “DailyProcessing.sql”, as follows:
+
 mysql> source DailyProcessing.sql
         
 And quit:
@@ -70,14 +71,23 @@ mysql> quit
 
 
 This is the contents of the “DailyProcessing.sql” script file:
+
 /* Mysql should be in your command line path. e.g. C:\Program Files\MySQL\MySQL Workbench 8.0 CE\mysql.exe */
 /* first download the NY Times Covid data file (state totals): Run "python Covid19NyTimesDownload.py".  The script will update this file: C:/data/us-states.csv */
 
+
 /* mysql --user=root --password=root */
+
+
 use covid19_2;
+
 Truncate Table coviddata_state;
+
 LOAD DATA INFILE     'C:/data/us-states.csv'     INTO TABLE coviddata_state    FIELDS TERMINATED BY ','     LINES TERMINATED BY '\n'    IGNORE 1 LINES;
+
 CALL Covid_LoadNewCycles();
+
 call Covid_CreateExportFile();
+
 quit
 
